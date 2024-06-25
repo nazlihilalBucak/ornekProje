@@ -1,0 +1,30 @@
+# <url> adresine gidilir ve sayfanın yüklenmesi beklenir.
+* <url> adresine gidilir
+* "3" saniye bekle
+
+# Bildirim sorguları ekranından detaylı sorgulamaya tıklanır ve sorgu ekranına gidilir.
+* "hoverBildirimSorgulari" elementin üstünde bekle
+* "detayliSorguEkrani" elementine tıkla
+
+# Bist bilişim endeksine bağlı şirketlerin finansal raporları filtresi seçilir.
+* "endeksSecimi" elementine tıkla
+* "3" saniye bekle
+* "bistBilisimEndeksi" alanina js ile kaydir
+* "3" saniye bekle
+* "bistBilisimEndeksi" elementine tıkla
+* "bildirimFiltresi" elementine tıkla
+* "3" saniye bekle
+* "finansalBildirim" elementine tıkla
+
+# Bugünün tarihi alınır ve bugün ay bitimi değil ise önceki 3 ay kapanışı alınır.
+* "tarihSecimi" elementine tıkla
+* Bugünün tarihini al ve 3 aylık ay kapanışa göre seçim yap
+* "buttonAra" elementine tıkla
+* "baslangicTarihi","bitisTarihi" Elementin text değerini al, ardından yyyy-mm-dd formatına uygun olarak yaz
+* "10" saniye bekle
+
+# Arama sonucu şirketlerin servisten dönen JSON bodyleri kriterlere göre sort edilerek txt dosyasına kaydedilir.
+* Filtrelere göre arama sonucunun requestBody'sine get isteği at, dönen response sonuçlarını kaydet
+
+# Responseda bulunan verilerin sayfa üzerinde var olduğunu kontrol et.
+* Response sorgusundan dönen verilerin sayfa üzerinde varlığını kontrol et
