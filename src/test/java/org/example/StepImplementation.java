@@ -128,6 +128,8 @@ public class StepImplementation {
                 clickElement("sonrakiAyaIlerle");
             }
             clickElement("sonSecilenGun");
+            clickElement("buttonUygula");
+            waitBySeconds(2);
         }
     }
 
