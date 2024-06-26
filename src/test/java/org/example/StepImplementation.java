@@ -10,9 +10,11 @@ import io.restassured.specification.RequestSpecification;
 import org.example.Request.MkkRequest;
 import org.example.Response.MkkResponse;
 import org.openqa.selenium.*;
+
+import java.io.*;
+
 import org.openqa.selenium.interactions.Actions;
 
-import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -203,33 +205,14 @@ public class StepImplementation {
             System.out.println("status code yanlış.");
         } else {
             try {
+                eskiDosyalariSil();
                 String jsonResponse = response.getBody().asString();
                 mkkResponses = objectMapper.readValue(jsonResponse, new TypeReference<List<MkkResponse>>() {});
 
-                Collections.sort(mkkResponses, Comparator.comparing(MkkResponse::getKapTitle));
-                BufferedWriter writer = new BufferedWriter(new FileWriter("siralanmis_response/sirket_ismine_gore_siralanmis.txt"));
-                    for (MkkResponse responses : mkkResponses) {
-                        writer.write(responses.toString());
-                        writer.newLine();
-                    }
+                siralaVeDosyayaYaz(mkkResponses, "siralanmis_response/sirket_ismine_gore_siralanmis.txt", Comparator.comparing(MkkResponse::getKapTitle));
+                siralaVeDosyayaYaz(mkkResponses, "siralanmis_response/tarihe_gore_siralanmis.txt", Comparator.comparing(MkkResponse::getPublishDate).reversed());
+                siralaVeDosyayaYaz(mkkResponses, "siralanmis_response/artan_endekse_gore_siralanmis.txt", Comparator.comparingInt(MkkResponse::getDisclosureIndex).reversed());
 
-
-                Collections.sort(mkkResponses, Comparator.comparing(MkkResponse::getPublishDate).reversed());
-                BufferedWriter writer1 = new BufferedWriter(new FileWriter("siralanmis_response/tarihe_gore_siralanmis.txt"));
-                    for (MkkResponse responses : mkkResponses) {
-                    writer1.write(responses.toString());
-                    writer1.newLine();
-                    }
-
-
-
-
-                Collections.sort(mkkResponses, Comparator.comparingInt(MkkResponse::getDisclosureIndex).reversed());
-                BufferedWriter writer2 = new BufferedWriter(new FileWriter("siralanmis_response/artan_endekse_gore_siralanmis.txt"));
-                    for (MkkResponse responses : mkkResponses){
-                        writer2.write(responses.toString());
-                        writer2.newLine();
-                    }
 
             } catch (Exception e) {
                 System.out.println(e);
@@ -237,6 +220,19 @@ public class StepImplementation {
         }
 
     }
+    private static void dosyayaYaz(String dosyaAdi, List<MkkResponse> responses) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(dosyaAdi))) {
+            for (MkkResponse response : responses) {
+                writer.write(response.toString());
+                writer.newLine();
+            }
+        }
+    }
+    private static void siralaVeDosyayaYaz(List<MkkResponse> responses, String dosyaAdi, Comparator<MkkResponse> comparator) throws IOException {
+        Collections.sort(responses, comparator);
+        dosyayaYaz(dosyaAdi, responses);
+    }
+
     @Step("Filtrelere göre arama sonucunun requestBody'sine get isteği at, dönen response sonuçlarını kaydet")
     public void getService() {
         requestBodySet();
@@ -265,6 +261,19 @@ public class StepImplementation {
             System.out.println("Sayfa üzerinde bulunan kapTitle: " + kapTitle);
         } else {
             System.out.println("Sayfa üzerinde bulunmayan kaptTitle: " + kapTitle);
+        }
+    }
+
+    private static void eskiDosyalariSil() {
+        File dir = new File("siralanmis_response");
+        if (dir.exists()) {
+            for (File file : dir.listFiles()) {
+                if (file.isFile()) {
+                    file.delete();
+                }
+            }
+        } else {
+            dir.mkdirs();
         }
     }
 }
